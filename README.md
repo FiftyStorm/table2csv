@@ -20,7 +20,7 @@ pip install beautifulsoup4
 python table2csv.py
 ```
 
-![image](https://user-images.githubusercontent.com/3880712/148561831-206f23dc-4f58-47d2-9118-ec7f04d0aa18.png)
+![image](https://user-images.githubusercontent.com/3880712/148562252-c8ca2486-b265-4818-8f8b-e113b2e5e7b3.png)
 
 
 
