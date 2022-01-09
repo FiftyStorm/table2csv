@@ -1,5 +1,6 @@
 import os
 import glob
+import sys
 import re
 import csv
 from bs4 import BeautifulSoup
@@ -18,7 +19,6 @@ TRANS_DICT = {
   ,     "+" : ""
   ,     "(" : ""
   ,     ")" : ""
-  ,     " " : ""
   ,     ":" : ""
   ,     "<" : ""
   ,     ">" : ""
@@ -27,8 +27,15 @@ TRANS_DICT = {
 TRANS_TBL = str.maketrans(TRANS_DICT)
 
 # TODO : Modify the method to define the CSV name based on the configuration file.
-def getCSVName(table):
-  return table["id"]
+def getCSVName(table, table_num):
+  csv_name = str(table_num)
+  if len(sys.argv) == 2:
+    if table.has_attr(sys.argv[1]):
+      csv_name = table[sys.argv[1]]
+  if table.has_attr("id"):
+    csv_name = table["id"]
+  csv_name = csv_name.replace("\n" , "").replace("\xa0", "")
+  return csv_name.translate(TRANS_TBL).replace(" " , "-")[0:202]
 
 # TODO : Too complicated. Will be refactoring.
 def getNewRowspanColDict(row, row_num, rowspan_col_dict):  
@@ -83,9 +90,11 @@ for html_file in html_files:
   html = open(html_file, "r")
   soup = BeautifulSoup(html, "html.parser")
   tables = soup.find_all("table")
+  table_num = 0
   for table in tables:
+    table_num += 1
     rows = table.find_all("tr")
-    csv_name = getCSVName(table)
+    csv_name = getCSVName(table, table_num)
     with open( "./csv/" + csv_name + ".csv", "a", encoding="utf-8", newline="") as csv_file:
       writer = csv.writer(csv_file)
       row_num = 1
