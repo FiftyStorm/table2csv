@@ -4,8 +4,7 @@ Converts html table into csv.
 
 Support for cell merging.
 
-![image](https://user-images.githubusercontent.com/3880712/148676791-c5b9a5bd-6346-4643-a44a-a2781125db41.png)
-
+![image](https://user-images.githubusercontent.com/3880712/148676961-40c6c503-476b-493b-b942-79d831189304.png)
 
 # Installation
 
