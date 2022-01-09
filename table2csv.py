@@ -114,7 +114,10 @@ for html_file in html_files:
             continue          
           rowspan_col_dict.setdefault(key,new_rowspan_col_dict[key])          
         if csv_row:
-          writer.writerow(csv_row)
+          if row.findAll("th"):
+            writer.writerow([""] + csv_row)
+          if not row.findAll("th"):  
+            writer.writerow([html_file] + csv_row)
         row_num += 1
     csv_file.close()
     csv_name_list.append(csv_name)
