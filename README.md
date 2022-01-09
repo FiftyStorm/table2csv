@@ -2,9 +2,9 @@
 
 Converts html table into csv.
 
-Support for multi-level headers.
+Support for cell merging.
 
-![image](https://user-images.githubusercontent.com/3880712/148561232-1cf6b1c8-9797-421d-a10e-93b6a3c16df4.png)
+![image](https://user-images.githubusercontent.com/3880712/148673791-c86d21b8-1cca-443c-a7b8-c2563c35ac3b.png)
 
 # Installation
 
