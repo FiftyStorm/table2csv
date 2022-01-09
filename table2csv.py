@@ -26,36 +26,39 @@ TRANS_DICT = {
 
 TRANS_TBL = str.maketrans(TRANS_DICT)
 
-# TODO:Modify this method according to the style of html you want to parse.
+# TODO : Modify the method to define the CSV name based on the configuration file.
 def getCSVName(table):
   return table["id"]
 
-def getNewRowspanColDict(row, row_num):
-  rowspan_col_dict = {}
+# TODO : Too complicated. Will be refactoring.
+def getNewRowspanColDict(row, row_num, rowspan_col_dict):  
+  new_rowspan_col_dict = {}
   rownum_affected_rowspan = 0
   col_index = 1
   for cell in row.findAll(["th","td"]):
+    if row_num in rowspan_col_dict:
+      for val in rowspan_col_dict[row_num]:
+        if val == col_index:
+          col_index += 1
     if "colspan" in str(cell):
       col_index = col_index + int(cell["colspan"]) - 1
     if "rowspan" in str(cell):
       for rownum_affected_rowspan in range(row_num + 1, row_num + int(cell["rowspan"])):
-        if rownum_affected_rowspan in rowspan_col_dict:
-          rowspan_col_dict[rownum_affected_rowspan].append(col_index)
+        if rownum_affected_rowspan in new_rowspan_col_dict:
+          new_rowspan_col_dict[rownum_affected_rowspan].append(col_index)
           continue
-        rowspan_col_dict.setdefault(rownum_affected_rowspan,[col_index])
+        new_rowspan_col_dict.setdefault(rownum_affected_rowspan,[col_index])
         if "colspan" in str(cell):
           for col_index_affected_rowspan in range(col_index - int(cell["colspan"]) + 1 , col_index):
-            rowspan_col_dict[rownum_affected_rowspan].append(col_index_affected_rowspan)
-            rowspan_col_dict[rownum_affected_rowspan].sort()
+            new_rowspan_col_dict[rownum_affected_rowspan].append(col_index_affected_rowspan)
+            new_rowspan_col_dict[rownum_affected_rowspan].sort()
     col_index += 1
-  return rowspan_col_dict
+  return new_rowspan_col_dict
 
 def reflectRowspan(csv_row, row_num, rowspan_col_dict):
   if row_num in rowspan_col_dict:
     for rowspan_col_index in rowspan_col_dict[row_num]:
-      print(csv_row)
       csv_row.insert(rowspan_col_index - 1 ,"")
-      print(csv_row)
   return csv_row
 
 def getTblData(row):
@@ -93,17 +96,14 @@ for html_file in html_files:
           continue
         csv_row = getTblData(row)
         csv_row = reflectRowspan(csv_row, row_num, rowspan_col_dict)
-        new_rowspan_col_dict = getNewRowspanColDict(row, row_num)
+        # TODO : To method.
+        new_rowspan_col_dict = getNewRowspanColDict(row, row_num, rowspan_col_dict)
         for key in new_rowspan_col_dict.keys():
           if key in rowspan_col_dict:
             rowspan_col_dict[key].extend(new_rowspan_col_dict[key])
-            print(rowspan_col_dict)
-            print(key)
-            rowspan_col_dict[key] = list(set(rowspan_col_dict[key]))
             rowspan_col_dict[key].sort()
-            print(rowspan_col_dict)
-            continue
-          rowspan_col_dict.update(new_rowspan_col_dict)
+            continue          
+          rowspan_col_dict.setdefault(key,new_rowspan_col_dict[key])          
         if csv_row:
           writer.writerow(csv_row)
         row_num += 1
